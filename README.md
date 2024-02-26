@@ -14,6 +14,9 @@ Install [Minikube](https://minikube.sigs.k8s.io/docs/) and [kubectl](https://kub
 Start a Minikube cluster  
 `minikube start`
 
+Get all minikube services  
+`minikube service list`
+
 Get the cluster's state  
 `kubectl get nodes`
 
@@ -75,6 +78,52 @@ Change the image via the CLI (also possible with `kubectl edit`):
 Undo the latest command:  
 `kubectl rollout undo deployment hello-go`
 
----
+### Using Helm:
 
-**Todo:**  Chapter 4 (page 48)
+Add Bitnami's Helm Chart repository:
+`helm repo add bitnami https://charts.bitnami.com/bitnami`
+
+Enable Loadbalancer for Minikube:
+`minikube tunnel`
+
+
+Install Drupal in your default namespace with the release name 'mysite'  
+`helm install mysite bitnami/drupal`
+Uninstall it  
+`helm uninstall mysite`
+
+Deploying Drupal Kubernetes Manifests
+
+Create a namespace for the Drupal site.  
+`kubectl create namespace drupal`  
+Create the MySQL (MariaDB) Deployment.  
+`kubectl apply -f mariadb.yml`  
+Create the Drupal (Apache + PHP) Deployment.  
+`kubectl apply -f drupal.yml`  
+You can then observe the status of the deployments:  
+`kubectl get deployments -n drupal -w`  
+
+### Working in Namespaces
+Set current namespace:  
+`kubectl config set-context --current --namespace=drupal`  
+Get current namespace:  
+`kubectl config view | grep namespace:`  
+Set Namespace back to default:  
+`kubectl config set-context --current --namespace=""`  
+
+Open Url with "Minikube":  
+`minikube service -n drupal drupal`
+With other clusters:  
+`kubectl get service -n drupal drupal`  
+Get more information of the nodes:  
+`kubectl get nodes -o wide`  
+
+Get logs:  
+`kubectl logs -f -n drupal -l app=drupal`
+
+**Cleaning up:**  
+This will delete the whole namespace and everything inside:  
+`kubectl delete namespace drupal`
+
+
+### ToDo Chapter 5 (page 61)
