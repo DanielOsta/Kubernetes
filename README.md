@@ -29,7 +29,8 @@ minikube delete
 # Basic: kubectl action resource
 kubectl get nodes --help
 
-kubectl proxy # Will create a proxy that will forward communications into the private network (my terminial)
+# Will create a proxy that will forward communications into the private network (my terminial)
+kubectl proxy 
 
 # Get the pod name
 export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
@@ -38,8 +39,28 @@ echo Name of the Pod: $POD_NAME
 # Access the Pod through the proxied API
 curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/
 ```
-
-
 `kubectl` commands: https://kubernetes.io/docs/reference/kubectl/
 
-Up next: `https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/`
+
+**Pods** are the atomic unit on the Kubernetes platform.
+A pod can consist of multiple containers.
+In case of a Node failure, identical Pods are scheduled on other available Nodes in the cluster.  
+A **Node** is a worker machine in Kubernetes and can be either a virtual or a physical machine.
+It can have multiple pods.  
+Every Node runs at least:
+- Kubelet - process responsible for communication between the K8s control plane and the Node
+- A container runtime (like Docker)
+
+### Node overview
+![alt text](https://kubernetes.io/docs/tutorials/kubernetes-basics/public/images/module_03_nodes.svg)
+
+**kubectl commands**
+Most common operations can be done with this subcommands:
+```bash
+kubectl get # list resources
+kubectl describe # show detailed information about a resource
+kubectl logs # print the logs from a container in a pod
+kubectl exec # execute a command on a container in a pod
+```
+
+Up next: `https://kubernetes.io/docs/tutorials/kubernetes-basics/expose/expose-intro/`
