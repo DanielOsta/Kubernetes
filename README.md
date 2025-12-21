@@ -38,6 +38,9 @@ kubectl get services # view services
 minikube service hello-node # only for minikube - to view the service
 
 kubectl get pod,svc -n kube-system # view pods and services
+
+# switch context
+kubectl config use-context minikube
 ```
 
 ### Clean up
@@ -54,7 +57,7 @@ minikube delete
 ```bash
 minikube addons list
 minikube addons enable metrics-server # enable Minikube addons
-kubectl top pods # view output of `metrics-server`
+kubectl top pods # view output of `metrics-server` - could take 2min after install
 minikube addons disable metrics-server
 ```
 
@@ -62,6 +65,9 @@ minikube addons disable metrics-server
 ```bash
 # Basic: kubectl action resource
 kubectl get nodes --help
+
+kubectl create deployment kubernetes-bootcamp --image=nginx:latest
+kubectl get deployments
 
 # Will create a proxy that will forward communications into the private network (my terminial)
 kubectl proxy 
@@ -131,5 +137,26 @@ kubectl get pods -l version=v1
 ```bash
 kubectl delete service -l app=kubernetes-bootcamp
 ```
+
+### Scaling
+
+```bash
+kubectl expose deployment/kubernetes-bootcamp --type="LoadBalancer" --port 8080
+kubectl get rs # get replica sets
+kubectl scale deployments/kubernetes-bootcamp --replicas=4 # set replicas
+kubectl get pods -o wide 
+
+# normal
+export NODE_PORT="$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')"
+curl http://"$(minikube ip):$NODE_PORT"
+# docker desktop (Mac)
+minikube service kubernetes-bootcamp --url
+curl 127.0.0.1:<port>
+
+kubectl scale deployments/kubernetes-bootcamp --replicas=2 # this will take some time, until they are terminated
+
+```
+
+# ---
 
 Up next: `https://kubernetes.io/docs/tutorials/kubernetes-basics/scale/scale-intro/`

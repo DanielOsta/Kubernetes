@@ -1,0 +1,4 @@
+global:
+  imageRegistry: "registry.prolion.com"
+  security:
+    allowInsecureImages: true
