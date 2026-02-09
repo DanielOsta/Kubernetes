@@ -1,7 +1,9 @@
 # Kubernetes
+
 Going through the Kubernetes tutorial on [kubernetes.io](kubernetes.io)
 
 ## Installatioin
+
 ```bash
 brew install kubectl
 brew install minikube
@@ -15,6 +17,7 @@ minikube start
 ```
 
 ### Terminal
+
 ```bash
 # From https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#enable-shell-autocompletion
 # add the following to the ~/.zshrc file:
@@ -44,6 +47,7 @@ kubectl config use-context minikube
 ```
 
 ### Clean up
+
 ```bash
 kubectl delete service hello-node
 kubectl delete deployment hello-node
@@ -62,6 +66,7 @@ minikube addons disable metrics-server
 ```
 
 ### `kubectl` basics
+
 ```bash
 # Basic: kubectl action resource
 kubectl get nodes --help
@@ -70,7 +75,7 @@ kubectl create deployment kubernetes-bootcamp --image=nginx:latest
 kubectl get deployments
 
 # Will create a proxy that will forward communications into the private network (my terminial)
-kubectl proxy 
+kubectl proxy
 
 # Get the pod name
 export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
@@ -79,8 +84,8 @@ echo Name of the Pod: $POD_NAME
 # Access the Pod through the proxied API
 curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/
 ```
-`kubectl` commands: https://kubernetes.io/docs/reference/kubectl/
 
+`kubectl` commands: https://kubernetes.io/docs/reference/kubectl/
 
 **Pods** are the atomic unit on the Kubernetes platform.
 A pod can consist of multiple containers.
@@ -88,14 +93,17 @@ In case of a Node failure, identical Pods are scheduled on other available Nodes
 A **Node** is a worker machine in Kubernetes and can be either a virtual or a physical machine.
 It can have multiple pods.  
 Every Node runs at least:
+
 - Kubelet - process responsible for communication between the K8s control plane and the Node
 - A container runtime (like Docker)
 
 ### Node overview
+
 ![alt text](https://kubernetes.io/docs/tutorials/kubernetes-basics/public/images/module_03_nodes.svg)
 
 **kubectl commands**
 Most common operations can be done with this subcommands:
+
 ```bash
 kubectl get # list resources
 kubectl describe # show detailed information about a resource
@@ -103,12 +111,13 @@ kubectl logs # print the logs from a container in a pod
 kubectl exec # execute a command on a container in a pod
 
 kubectl exec "$POD_NAME" -- env
-kubectl exec -ti $POD_NAME -- bash 
+kubectl exec -ti $POD_NAME -- bash
 ```
 
 ## Expose the App Publicly
 
 ### Creating a new Service
+
 ```bash
 kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
 kubectl get services
@@ -123,6 +132,7 @@ curl http://"$(minikube ip):$NODE_PORT"
 ```
 
 ### Using labels
+
 ```bash
 export POD_NAME="$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')"
 echo "Name of the Pod: $POD_NAME"
@@ -134,17 +144,20 @@ kubectl get pods -l version=v1
 ```
 
 ### Delete a service
+
 ```bash
 kubectl delete service -l app=kubernetes-bootcamp
 ```
 
-### Scaling
+### [Scaling](https://kubernetes.io/docs/tutorials/kubernetes-basics/scale/scale-intro/)
 
 ```bash
 kubectl expose deployment/kubernetes-bootcamp --type="LoadBalancer" --port 8080
 kubectl get rs # get replica sets
 kubectl scale deployments/kubernetes-bootcamp --replicas=4 # set replicas
-kubectl get pods -o wide 
+kubectl get pods -o wide
+
+kubectl describe deployments/kubernetes-bootcamp #
 
 # normal
 export NODE_PORT="$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')"
@@ -159,4 +172,4 @@ kubectl scale deployments/kubernetes-bootcamp --replicas=2 # this will take some
 
 # ---
 
-Up next: `https://kubernetes.io/docs/tutorials/kubernetes-basics/scale/scale-intro/`
+https://kubernetes.io/docs/tutorials/kubernetes-basics/expose/
